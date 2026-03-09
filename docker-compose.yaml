@@ -2,17 +2,17 @@ services:
   warehouse:
     image: postgres:13
     environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=source
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - db-data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT}:5432"
     networks:
       - dm_net
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U root -d source"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 1m30s
       timeout: 5s
       retries: 3
@@ -21,8 +21,8 @@ services:
   warehouseui:
     image: dpage/pgadmin4
     environment:
-      - PGADMIN_DEFAULT_EMAIL=enaunay@gmail.com
-      - PGADMIN_DEFAULT_PASSWORD=root
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
     volumes:
       - db-ui-data:/var/lib/pgadmin
     ports:
@@ -34,11 +34,13 @@ services:
         condition: service_healthy
     
   scheduler:
-    image: mageai/mageai
+    # Si usas el Dockerfile personalizado, cambia 'image' por 'build: .'
+    build: .
     volumes:
       - scheduler-data:/home/src
     ports:
       - "6789:6789"
+    # El comando inicia el planificador de Mage AI
     command: /app/run_app.sh mage start scheduler
     networks:
       - dm_net
@@ -54,5 +56,3 @@ volumes:
 networks:
   dm_net:
     driver: bridge
-
-  
