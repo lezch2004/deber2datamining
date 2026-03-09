@@ -67,6 +67,14 @@ credenciales definidas en docker-compose.yml.
 
 Postgres: Accesible en localhost:5432.
 
+Dentro del pgadmin se registra el servidor para poder utilizarlo. Dento de mage se realizo la configuración de dbt en la carpeta dbt del proyecto mage: 
+
+cd scheduler
+cd dbt
+dbt init -s taxi_trips_transformations 
+
+Al recibir un Happy Modeling! estás listo. Aquí se ha generado toda la configuración en archivos como profiles.yml dentro de dbt o la configuración física con las carpetas.
+
 # 4. Mage Pipelines
 El proyecto gira alrededor de estos pipelines. El principal para la ingesta de datos es el pipeline padre ingest_bronze, este llama a taxi_trips_ingest y zones_ingest para completar la ingesta a bronze.
 
@@ -86,6 +94,24 @@ El proyecto gira alrededor de estos pipelines. El principal para la ingesta de d
 
 Ahora con la ingesta acabada vienen los pipelines relacionados al uso de dbt: 
 
+
+# 5. Triggers
+
+# 6. Gestión de Secretos
+Las instrucciones del proyecto son muy claras en especificar que no se deben hard-codear de ninguna manera las variables de ambientes, sean claves, puertos, etc... en un archivo .env. Por está razón, se ha utilizado Mage Secrets para poder gestionar los secretos dentro del proyecto. De igual manera, dentro del io_config.yml las variables se obtienen de secrets así: 
+
+POSTGRES_DBNAME:  "{{ mage_secret_var('POSTGRES_DBNAME') }}"
+
+En las evidencias se pueden ver los secretos en mage secrets. 
+
+Diccionario de Variables de Conexión
+- POSTGRES_USER: Usuario administrativo de la base de datos.
+- POSTGRES_PASSWORD: Contraseña de acceso.
+- POSTGRES_DB: Nombre de la base de datos destino.
+- POSTGRES_HOST: Nombre del servicio en la red de Docker.
+- POSTGRES_PORT: Puerto expuesto para la comunicación interna.
+
+En los pipelines se accede con mage_secret_var.
 
 
     
