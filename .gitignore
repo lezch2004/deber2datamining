@@ -1,2 +1,18 @@
-.env                   
+.env
+.env.local
 
+# Mage y Python
+__pycache__/
+*.py[cod]
+*$py.class
+.mage_variables/
+.mage_common_variables.json
+
+# Docker y Base de Datos
+db-data/
+postgres_data/
+
+# dbt
+target/
+dbt_packages/
+logs/
